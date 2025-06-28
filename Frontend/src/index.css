@@ -1,0 +1,9 @@
+@import "tailwindcss";
+
+svg[width="auto"] {
+  width: 24px !important;
+}
+
+svg[height="auto"] {
+  height: 24px !important;
+}
