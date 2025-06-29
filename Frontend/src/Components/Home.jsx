@@ -6,8 +6,7 @@ import FundraiserSteps from "../Components/FundraiserSteps";
 import WhySeva from "./Whyseva";
 import { useNavigate, Link } from "react-router-dom";
 
-const heroImage = "/cancer-patient.jpg";
-
+const heroImage = "/cancer-patient.jpg"; // ✅ Make sure it's NOT duplicated
 
 export default function Home() {
   const [campaigns, setCampaigns] = useState([]);
@@ -17,7 +16,7 @@ export default function Home() {
   useEffect(() => {
     const fetchCampaigns = async () => {
       try {
-        const res = await axios.get("http://localhost:5000/api/campaigns");
+        const res = await axios.get("/api/campaigns"); // ✅ Use relative URL in production
         setCampaigns(res.data);
       } catch (err) {
         console.error("Failed to fetch campaigns:", err);
@@ -53,9 +52,7 @@ export default function Home() {
       >
         <div className="position-absolute top-0 start-0 w-100 h-100 bg-dark bg-opacity-50"></div>
         <div className="position-relative text-center px-4">
-          <h1 className="display-4 fw-bold mb-3">
-            Support a Life, Fund a Cause
-          </h1>
+          <h1 className="display-4 fw-bold mb-3">Support a Life, Fund a Cause</h1>
           <p className="lead mb-4">
             Seva is a medical crowdfunding platform helping real people in
             critical need.
@@ -74,15 +71,11 @@ export default function Home() {
 
       {/* Campaigns Section */}
       <section className="container py-5">
-        <h2 className="text-center fw-bold mb-4 text-primary">
-          Active Campaigns
-        </h2>
+        <h2 className="text-center fw-bold mb-4 text-primary">Active Campaigns</h2>
         {loading ? (
           <p className="text-center text-muted">Loading campaigns...</p>
         ) : campaigns.length === 0 ? (
-          <p className="text-center text-muted">
-            No campaigns available right now.
-          </p>
+          <p className="text-center text-muted">No campaigns available right now.</p>
         ) : (
           <>
             <div className="row g-4">
