@@ -3,16 +3,16 @@ import express from "express";
 import Campaign from "../models/Campaign.js";
 import Donation from "../models/Donation.js";
 import twilio from "twilio";
-import dotenv from 'dotenv';
-
-dotenv.config();
 
 const router = express.Router();
 
-// ⚠️ Replace with secure environment variables in production
 const accountSid = process.env.TWILIO_SID;
 const authToken = process.env.TWILIO_AUTH_TOKEN;
 const twilioPhone = process.env.TWILIO_PHONE;
+
+console.log("SID:", process.env.TWILIO_SID);
+console.log("TOKEN:", process.env.TWILIO_AUTH_TOKEN);
+console.log("PHONE:", process.env.TWILIO_PHONE);
 
 if (!accountSid || !authToken || !twilioPhone) {
   throw new Error("Twilio credentials are missing in donationRoutes.js");

@@ -1,12 +1,14 @@
+import dotenv from "dotenv";
+dotenv.config();
+
+
 import express from "express";
 import mongoose from "mongoose";
-import dotenv from "dotenv";
 import cors from "cors";
 import path from "path";
 import session from "express-session";
 import passport from "passport";
 import { fileURLToPath } from "url";
-
 import "./config/passport.js"; // Passport config
 
 // Route imports
@@ -16,7 +18,7 @@ import paymentRoutes from "./routes/paymentRoutes.js";
 import authRoutes from "./routes/auth.js";
 import userRoutes from "./routes/userRoutes.js";
 
-dotenv.config();
+
 
 const app = express();
 
