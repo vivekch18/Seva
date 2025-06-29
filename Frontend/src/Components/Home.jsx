@@ -6,7 +6,7 @@ import FundraiserSteps from "../Components/FundraiserSteps";
 import WhySeva from "./Whyseva";
 import { useNavigate, Link } from "react-router-dom";
 
-const heroImage = "/cancer-patient.jpg"; // ✅ Make sure it's NOT duplicated
+const heroImage = "./public/cancer-patient.jpg"; // ✅ Make sure it's NOT duplicated
 
 export default function Home() {
   const [campaigns, setCampaigns] = useState([]);
