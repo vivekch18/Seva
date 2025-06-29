@@ -4,8 +4,10 @@ import CampaignCard from "../Components/CampaignCard";
 import Footer from "../Components/Footer";
 import FundraiserSteps from "../Components/FundraiserSteps";
 import WhySeva from "./Whyseva";
-import heroImage from "../assets/cancer-patient.jpg";
 import { useNavigate, Link } from "react-router-dom";
+
+const heroImage = "/cancer-patient.jpg";
+
 
 export default function Home() {
   const [campaigns, setCampaigns] = useState([]);
