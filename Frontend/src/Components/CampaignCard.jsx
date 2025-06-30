@@ -1,6 +1,9 @@
 import { Link } from "react-router-dom";
 import { FaShareAlt } from "react-icons/fa";
 
+// ✅ Access environment variable the Vite way
+const serverUrl = import.meta.env.VITE_SERVER_URL;
+
 export default function CampaignCard({ campaign }) {
   const {
     _id,
@@ -16,10 +19,10 @@ export default function CampaignCard({ campaign }) {
 
   const progress = goal > 0 ? Math.min((raised / goal) * 100, 100) : 0;
 
-  // Prefix backend URL if image is relative
+  // ✅ Correctly construct image URL
   const imageUrl = image?.startsWith("http")
     ? image
-    : `${process.env.SERVER_URL}/uploads/${image}`;
+    : `${serverUrl}/uploads/${image}`;
 
   const handleShare = () => {
     const url = `${window.location.origin}/campaign/${_id}`;
@@ -46,7 +49,7 @@ export default function CampaignCard({ campaign }) {
         style={{ height: "200px", objectFit: "cover" }}
         onError={(e) => {
           e.target.onerror = null;
-          e.target.src = "https://via.placeholder.com/400x200?text=No+Image";
+          e.target.src = "https://placehold.co/400x200?text=No+Image"; // ✅ more reliable than via.placeholder.com
         }}
       />
       <div className="card-body d-flex flex-column justify-content-between">

@@ -65,7 +65,7 @@ export default function CreateCampaign() {
   try {
     const token = localStorage.getItem("token"); // ✅ Get token from storage
 
-    const response = await axios.post(`${process.env.SERVER_URL}/api/campaigns`, formData, {
+    const response = await axios.post(`${import.meta.env.VITE_SERVER_URL}/api/campaigns`, formData, {
       headers: {
         "Content-Type": "multipart/form-data",
         Authorization: `Bearer ${token}`, // ✅ Include token in headers

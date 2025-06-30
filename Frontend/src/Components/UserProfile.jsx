@@ -25,7 +25,7 @@ export default function UserProfile() {
       }
 
       try {
-        const res = await axios.get(`${process.env.SERVER_URL}/api/users/profile`, {
+        const res = await axios.get(`${import.meta.env.VITE_SERVER_URL}/api/users/profile`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },

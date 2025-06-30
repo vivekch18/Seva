@@ -14,7 +14,7 @@ export default function CampaignDetail() {
   useEffect(() => {
     const fetchCampaign = async () => {
       try {
-        const res = await axios.get(`${process.env.SERVER_URL}/campaigns/${id}`);
+        const res = await axios.get(`${import.meta.env.VITE_SERVER_URL}/campaigns/${id}`);
         setCampaign(res.data);
       } catch (err) {
         setError("Failed to fetch campaign.");
