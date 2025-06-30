@@ -1,4 +1,4 @@
-// models/Donation.js
+// models/donation.js
 import mongoose from "mongoose";
 
 const donationSchema = new mongoose.Schema(
