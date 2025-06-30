@@ -1,4 +1,4 @@
-// models/donation.js
+//donation.js
 import mongoose from "mongoose";
 
 const donationSchema = new mongoose.Schema(
@@ -17,6 +17,5 @@ const donationSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-// const Donation = mongoose.model("Donation", donationSchema);
 const Donation = mongoose.models.Donation || mongoose.model("Donation", donationSchema);
 export default Donation;
