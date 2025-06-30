@@ -1,7 +1,7 @@
 // routes/donationRoutes.js
 import express from "express";
 import Campaign from "../models/Campaign.js";
-import Donation from "../models/Donation.js";
+import Donation from "../models/donation.js";
 import twilio from "twilio";
 
 const router = express.Router();
