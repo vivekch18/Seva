@@ -29,7 +29,7 @@ export default function Login() {
       return;
     }
     try {
-      await axios.post("http://localhost:5000/api/auth/send-otp", {
+      await axios.post(`${process.env.SERVER_URL}/api/auth/send-otp`, {
         contact: input.trim(),
       });
       setOtpSent(true);
@@ -46,7 +46,7 @@ export default function Login() {
       return;
     }
     try {
-      const res = await axios.post("http://localhost:5000/api/auth/verify-otp", {
+      const res = await axios.post("http://localhost:5000/api/auth/verify-otp`, {
         contact: input.trim(),
         otp: otp.trim(),
       });
