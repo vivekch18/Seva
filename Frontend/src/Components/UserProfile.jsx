@@ -25,7 +25,7 @@ export default function UserProfile() {
       }
 
       try {
-        const res = await axios.get("http://localhost:5000/api/users/profile", {
+        const res = await axios.get(`${process.env.SERVER_URL}/api/users/profile`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -91,7 +91,7 @@ export default function UserProfile() {
       }
 
       const res = await axios.put(
-        "http://localhost:5000/api/users/profile",
+        `${process.env.SERVER_URL}/api/users/profile`,
         trimmedData,
         {
           headers: {

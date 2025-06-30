@@ -14,7 +14,7 @@ export default function CampaignDetail() {
   useEffect(() => {
     const fetchCampaign = async () => {
       try {
-        const res = await axios.get(`http://localhost:5000/api/campaigns/${id}`);
+        const res = await axios.get(`${process.env.SERVER_URL}/campaigns/${id}`);
         setCampaign(res.data);
       } catch (err) {
         setError("Failed to fetch campaign.");
@@ -87,7 +87,7 @@ export default function CampaignDetail() {
               src={
                 campaign.image?.startsWith("http")
                   ? campaign.image
-                  : `http://localhost:5000/uploads/${campaign.image}`
+                  : `${process.env.SERVER_URL}/uploads/${campaign.image}`
               }
               alt={campaign.title}
               className="w-full h-96 object-cover rounded-lg mb-4"

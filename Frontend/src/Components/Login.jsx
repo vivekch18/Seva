@@ -46,7 +46,7 @@ export default function Login() {
       return;
     }
     try {
-      const res = await axios.post("http://localhost:5000/api/auth/verify-otp`, {
+      const res = await axios.post(`${process.env.SERVER_URL}/api/auth/verify-otp`, {
         contact: input.trim(),
         otp: otp.trim(),
       });
@@ -69,7 +69,7 @@ export default function Login() {
     }
 
     try {
-      const res = await axios.post("http://localhost:5000/api/auth/login", {
+      const res = await axios.post(`${process.env.SERVER_URL}/api/auth/login`, {
         phone: input.trim(),
         password,
       });
@@ -82,7 +82,7 @@ export default function Login() {
   };
 
   const handleGoogleLogin = () => {
-    window.open("http://localhost:5000/api/auth/google", "_self");
+    window.open(`${process.env.SERVER_URL}/api/auth/google`, "_self");
   };
 
   const toggleLoginMode = () => {

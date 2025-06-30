@@ -113,7 +113,7 @@ const WhySeva = () => {
                           href="tel:7360904330"
                           className="text-primary text-decoration-none"
                         >
-                          7360904330
+                          7360758960
                         </a>
                       </p>
                     </div>

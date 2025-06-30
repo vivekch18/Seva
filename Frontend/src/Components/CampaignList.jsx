@@ -15,7 +15,7 @@ export default function CampaignList() {
   useEffect(() => {
     const fetchCampaigns = async () => {
       try {
-        const res = await axios.get("http://localhost:5000/api/campaigns");
+        const res = await axios.get(`${process.env.SERVER_URL}/api/campaigns`);
         setCampaigns(res.data);
       } catch (err) {
         console.error("Error fetching campaigns:", err);
@@ -87,7 +87,7 @@ export default function CampaignList() {
               const imageUrl =
                 campaign.image?.startsWith("http") || campaign.image?.includes("base64")
                   ? campaign.image
-                  : `http://localhost:5000/uploads/${campaign.image}`;
+                  : `${process.env.SERVER_URL}/uploads/${campaign.image}`;
               const goal = Number(campaign.goal) || 0;
               const raised = Number(campaign.totalAmount) || 0;
               const progress = goal > 0 ? Math.min((raised / goal) * 100, 100) : 0;

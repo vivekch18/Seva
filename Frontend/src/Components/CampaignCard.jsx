@@ -19,7 +19,7 @@ export default function CampaignCard({ campaign }) {
   // Prefix backend URL if image is relative
   const imageUrl = image?.startsWith("http")
     ? image
-    : `http://localhost:5000/uploads/${image}`;
+    : `${process.env.SERVER_URL}/uploads/${image}`;
 
   const handleShare = () => {
     const url = `${window.location.origin}/campaign/${_id}`;
