@@ -1,4 +1,3 @@
-// routes/donationRoutes.js
 import express from "express";
 import Campaign from "../models/Campaign.js";
 import Donation from "../models/donation.js";    //its import the donation model

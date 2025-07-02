@@ -1,30 +1,12 @@
 import express from "express";
 import multer from "multer";
-import path from "path";
-import fs from "fs";
 import Campaign from "../models/Campaign.js";
 import Donation from "../models/donation.js";
 import { verifyToken } from "../middleware/verifyToken.js";
+import { storage } from '../utils/cloudinary.js'; // Cloudinary setup
 
 const router = express.Router();
-
-// Ensure uploads directory exists
-const uploadDir = path.join(path.resolve(), "uploads");
-if (!fs.existsSync(uploadDir)) {
-  fs.mkdirSync(uploadDir, { recursive: true }); // safer for nested folders
-}
-
-// Multer configuration for file upload
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, uploadDir),
-  filename: (req, file, cb) => {
-    // Clean originalname to avoid unwanted chars (optional)
-    const safeName = file.originalname.replace(/\s+/g, "-").toLowerCase();
-    cb(null, `${Date.now()}-${safeName}`);
-  },
-});
-
-const upload = multer({ storage });
+const uploads = multer({ storage });
 
 // ----------------------
 // Create Campaign
@@ -32,7 +14,7 @@ const upload = multer({ storage });
 router.post(
   "/",
   verifyToken,
-  upload.fields([
+  uploads.fields([
     { name: "image", maxCount: 1 },
     { name: "documents", maxCount: 5 },
   ]),
@@ -50,7 +32,6 @@ router.post(
         story,
       } = req.body;
 
-      // Basic validation
       if (
         !title || !description || !goal || !organizer ||
         !beneficiaryName || !medicalCondition || !email || !phone || !story
@@ -63,8 +44,8 @@ router.post(
         return res.status(400).json({ error: "Goal must be a positive number." });
       }
 
-      const image = req.files["image"]?.[0]?.filename || null;
-      const documents = req.files["documents"]?.map(file => file.filename) || [];
+      const image = req.files["image"]?.[0]?.path || null;
+      const documents = req.files["documents"]?.map(file => file.path) || [];
 
       const campaign = new Campaign({
         title,
@@ -90,6 +71,8 @@ router.post(
     }
   }
 );
+
+// The rest of your routes (get all, get by id, update, etc.) remain the same.
 
 // ----------------------
 // Get All Campaigns
@@ -168,33 +151,6 @@ res.json(campaignsWithAmount);
 // ----------------------
 router.get("/:id", async (req, res) => {
   try {
-//     const campaign = await Campaign.findById(req.params.id);
-//     if (!campaign) {
-//       return res.status(404).json({ error: "Campaign not found" });
-//     }
-//      const campaignIds = campaign.map(c => c._id);
-
-// // Find all donations for those campaigns
-// const totalDonations = await Donation.find({ campaign: { $in: campaignIds } });
-// console.log(totalDonations);
-//     // res.json(campaigns);
-//     const donationSumMap = {};
-// totalDonations.forEach(donation => {
-//   const id = donation.campaign.toString();
-//   donationSumMap[id] = (donationSumMap[id] || 0) + donation.amount;
-// });
-
-// // Attach total donation amount to each campaign
-// const campaignsWithAmount = campaign.map(campaign => {
-//   return {
-//     ...campaign.toObject(),
-//     totalAmount: donationSumMap[campaign._id.toString()] || 0,
-//   };
-// });
-
-// res.json(campaignsWithAmount);
-    // res.json(campaign);
-
     const campaign = await Campaign.findById(req.params.id);
 if (!campaign) {
   return res.status(404).json({ error: "Campaign not found" });
