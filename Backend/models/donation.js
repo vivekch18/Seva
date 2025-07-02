@@ -1,7 +1,3 @@
-<<<<<<< HEAD
-=======
-//donation.js
->>>>>>> d92767815edea73782547fd74243d8d9e0343264
 import mongoose from "mongoose";
 
 const donationSchema = new mongoose.Schema(
