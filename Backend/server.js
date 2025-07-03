@@ -51,11 +51,12 @@ app.use(passport.session());
 // Serve static files (uploads)
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
-// Connect to MongoDB
+// MongoDB connection
+mongoose.set('strictQuery', false); // Optional: avoid deprecation warnings
 mongoose
   .connect(process.env.MONGO_URI, {
     useNewUrlParser: true,
-    // useUnifiedTopology: true,
+    // useUnifiedTopology removed as it is deprecated
   })
   .then(() => console.log("✅ MongoDB connected"))
   .catch((err) => console.error("❌ MongoDB connection error:", err));
