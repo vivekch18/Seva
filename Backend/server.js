@@ -1,7 +1,6 @@
 import dotenv from "dotenv";
 dotenv.config();
 
-
 import express from "express";
 import mongoose from "mongoose";
 import cors from "cors";
@@ -18,8 +17,6 @@ import paymentRoutes from "./routes/paymentRoutes.js";
 import authRoutes from "./routes/auth.js";
 import userRoutes from "./routes/userRoutes.js";
 
-
-
 const app = express();
 
 // Fix for __dirname in ES modules
@@ -28,7 +25,7 @@ const __dirname = path.dirname(__filename);
 
 // Middleware
 app.use(cors({
-  origin: process.env.CLIENT_URL, // Frontend URL              "http://localhost:5173"
+  origin: process.env.CLIENT_URL || "http://localhost:5173", // fallback for local
   credentials: true,
 }));
 
@@ -58,10 +55,18 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 mongoose
   .connect(process.env.MONGO_URI, {
     useNewUrlParser: true,
-    useUnifiedTopology: true,
+    // useUnifiedTopology: true,
   })
   .then(() => console.log("✅ MongoDB connected"))
   .catch((err) => console.error("❌ MongoDB connection error:", err));
+
+// Health check route
+app.get("/", (req, res) => {
+  res.send("Seva backend is running!");
+});
+
+// Optional: prevent favicon 404 spam
+app.get("/favicon.ico", (req, res) => res.status(204).end());
 
 // Routes
 app.use("/api/campaigns", campaignRoutes);
@@ -75,4 +80,3 @@ const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`🚀 Server running at http://localhost:${PORT}`);
 });
-
