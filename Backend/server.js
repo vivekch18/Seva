@@ -25,7 +25,7 @@ const __dirname = path.dirname(__filename);
 
 // Middleware
 app.use(cors({
-  origin: process.env.CLIENT_URL || "http://localhost:5173", // fallback for local
+  origin: process.env.CLIENT_URL,           //"http://localhost:5173", // fallback for local
   credentials: true,
 }));
 
@@ -51,12 +51,11 @@ app.use(passport.session());
 // Serve static files (uploads)
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
-// MongoDB connection
-mongoose.set('strictQuery', false); // Optional: avoid deprecation warnings
+// Connect to MongoDB
 mongoose
   .connect(process.env.MONGO_URI, {
     useNewUrlParser: true,
-    // useUnifiedTopology removed as it is deprecated
+    // useUnifiedTopology: true,
   })
   .then(() => console.log("✅ MongoDB connected"))
   .catch((err) => console.error("❌ MongoDB connection error:", err));

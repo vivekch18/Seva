@@ -61,6 +61,12 @@ const campaignSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
+
+    // ✅ Add this field to track raised donations
+    totalAmount: {
+      type: Number,
+      default: 0,
+    },
   },
   { timestamps: true }
 );

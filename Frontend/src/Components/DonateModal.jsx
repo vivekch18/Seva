@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import loadRazorpay from "../utils/loadRazorpay";
 
-const DonateModal = ({ campaignId, campaignTitle, onClose }) => {
+const DonateModal = ({ campaignId, campaignTitle, onClose, onDonationSuccess }) => {
   const navigate = useNavigate();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -11,7 +11,6 @@ const DonateModal = ({ campaignId, campaignTitle, onClose }) => {
   const [loading, setLoading] = useState(false);
   const [totalRaised, setTotalRaised] = useState(0);
 
-  // Fetch total donations when the modal opens
   useEffect(() => {
     const fetchTotalRaised = async () => {
       try {
@@ -49,8 +48,7 @@ const DonateModal = ({ campaignId, campaignTitle, onClose }) => {
 
       if (!orderRes.ok) {
         const errorData = await orderRes.json().catch(() => ({}));
-        const errorMessage = errorData.message || "Failed to create Razorpay order";
-        throw new Error(errorMessage);
+        throw new Error(errorData.message || "Failed to create Razorpay order");
       }
 
       const { order } = await orderRes.json();
@@ -79,15 +77,15 @@ const DonateModal = ({ campaignId, campaignTitle, onClose }) => {
 
             if (!donationRes.ok) {
               const errorData = await donationRes.json().catch(() => ({}));
-              const errorMsg = errorData.message || "Failed to save donation details.";
-              throw new Error(errorMsg);
+              throw new Error(errorData.message || "Failed to save donation details.");
             }
 
             alert("Thank you for your donation!");
-            // Refresh total raised
-            const totalRes = await fetch(`/api/donations/total/${campaignId}`);
-            const totalData = await totalRes.json();
-            setTotalRaised(totalData.total || 0);
+
+            // 🔁 Trigger refresh on parent
+            if (typeof onDonationSuccess === "function") {
+              await onDonationSuccess();
+            }
 
             onClose();
             navigate("/campaigns");
@@ -101,9 +99,7 @@ const DonateModal = ({ campaignId, campaignTitle, onClose }) => {
           email,
           contact: phone,
         },
-        theme: {
-          color: "#4CAF50",
-        },
+        theme: { color: "#4CAF50" },
       };
 
       const rzp = new window.Razorpay(options);
@@ -114,10 +110,6 @@ const DonateModal = ({ campaignId, campaignTitle, onClose }) => {
     } finally {
       setLoading(false);
     }
-  };
-
-  const handleCancel = () => {
-    onClose();
   };
 
   return (
@@ -158,7 +150,7 @@ const DonateModal = ({ campaignId, campaignTitle, onClose }) => {
         />
         <div className="flex justify-between">
           <button
-            onClick={handleCancel}
+            onClick={onClose}
             className="px-4 py-2 bg-gray-400 rounded text-white"
           >
             Cancel

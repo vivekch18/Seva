@@ -7,10 +7,30 @@ const donationSchema = new mongoose.Schema(
       ref: "Campaign",
       required: true,
     },
-    name: { type: String, required: true },
-    amount: { type: Number, required: true },
-    email: { type: String },
-    phone: { type: String },
+    name: {
+      type: String,
+      required: [true, "Donor name is required"],
+      trim: true,
+    },
+    amount: {
+      type: Number,
+      required: [true, "Donation amount is required"],
+      min: [1, "Donation amount must be at least ₹1"],
+    },
+    email: {
+      type: String,
+      trim: true,
+      lowercase: true,
+    },
+    phone: {
+      type: String,
+      trim: true,
+      match: [/^[0-9]{10}$/, "Please provide a valid 10-digit phone number"],
+    },
+    razorpay_payment_id: {
+      type: String,
+      trim: true,
+    },
   },
   { timestamps: true }
 );

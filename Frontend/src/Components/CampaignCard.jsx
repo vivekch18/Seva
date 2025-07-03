@@ -11,15 +11,17 @@ export default function CampaignCard({ campaign }) {
     description = "",
     image,
     goal = 0,
-    raised = 0,
+    raised,
     totalAmount,
     beneficiaryName,
     medicalCondition,
   } = campaign || {};
 
-  const progress = goal > 0 ? Math.min((raised / goal) * 100, 100) : 0;
+  // ✅ Use totalAmount or fallback to raised
+  const actualRaised = totalAmount ?? raised ?? 0;
+  const progress = goal > 0 ? Math.min((actualRaised / goal) * 100, 100) : 0;
 
-  // ✅ Correctly construct image URL
+  // ✅ Construct image URL with fallback
   const imageUrl = image?.startsWith("http")
     ? image
     : `${serverUrl}/uploads/${image}`;
@@ -27,7 +29,7 @@ export default function CampaignCard({ campaign }) {
   const handleShare = () => {
     const url = `${window.location.origin}/campaign/${_id}`;
     const shareData = {
-      title: title,
+      title,
       text: `Support ${beneficiaryName || "this campaign"} on Seva!\n\nClick the link to know more and donate: ${url}`,
       url,
     };
@@ -49,14 +51,16 @@ export default function CampaignCard({ campaign }) {
         style={{ height: "200px", objectFit: "cover" }}
         onError={(e) => {
           e.target.onerror = null;
-          e.target.src = "https://placehold.co/400x200?text=No+Image"; // ✅ more reliable than via.placeholder.com
+          e.target.src = "https://placehold.co/400x200?text=No+Image";
         }}
       />
       <div className="card-body d-flex flex-column justify-content-between">
         <div>
           <h5 className="card-title fw-bold text-dark">{title}</h5>
           <p className="card-text text-secondary small">
-            {medicalCondition ? `For: ${beneficiaryName} - ${medicalCondition}` : description}
+            {medicalCondition
+              ? `For: ${beneficiaryName} - ${medicalCondition}`
+              : description}
           </p>
         </div>
 
@@ -64,11 +68,11 @@ export default function CampaignCard({ campaign }) {
           <div className="w-100 bg-light rounded-pill h-4 mb-2 overflow-hidden">
             <div
               className="bg-indigo-600 h-100 rounded-pill"
-              style={{ width: `${(totalAmount / goal) * 100}%` }}
+              style={{ width: `${progress}%` }}
             ></div>
           </div>
           <p className="text-muted small mb-3">
-            ₹{totalAmount} raised of ₹{goal}
+            ₹{actualRaised.toLocaleString()} raised of ₹{goal.toLocaleString()}
           </p>
 
           <div className="d-flex gap-2">

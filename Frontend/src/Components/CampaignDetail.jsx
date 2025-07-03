@@ -6,7 +6,6 @@ import Footer from "./Footer";
 
 const serverUrl = import.meta.env.VITE_SERVER_URL;
 
-
 export default function CampaignDetail() {
   const { id } = useParams();
   const [campaign, setCampaign] = useState(null);
@@ -14,29 +13,29 @@ export default function CampaignDetail() {
   const [error, setError] = useState(null);
   const [donateModalOpen, setDonateModalOpen] = useState(false);
 
-  useEffect(() => {
-    const fetchCampaign = async () => {
-      try {
-        const res = await axios.get(`${serverUrl}/api/campaigns/${id}`);
-        setCampaign(res.data);
-      } catch (err) {
-        setError("Failed to fetch campaign.");
-        console.error("Fetch error:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
+  const fetchCampaign = async () => {
+    try {
+      const res = await axios.get(`${serverUrl}/api/campaigns/${id}`);
+      setCampaign(res.data);
+    } catch (err) {
+      setError("Failed to fetch campaign.");
+      console.error("Fetch error:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
     fetchCampaign();
   }, [id]);
 
   const handleDonateClick = () => setDonateModalOpen(true);
 
   const handleShare = () => {
-    const url = `${window.location.origin}/campaign/${campaign._id}`;
+    const url = `${window.location.origin}/campaign/${campaign?._id}`;
     const shareData = {
-      title: campaign.title,
-      text: `Support ${campaign.beneficiaryName || "this campaign"} on Seva!\n\nClick the link to know more and donate: ${url}`,
+      title: campaign?.title || "Support this campaign",
+      text: `Support ${campaign?.beneficiaryName || "this campaign"} on Seva!\n\nClick to know more: ${url}`,
       url,
     };
 
@@ -90,7 +89,7 @@ export default function CampaignDetail() {
               src={
                 campaign.image?.startsWith("http")
                   ? campaign.image
-                  : `${process.env.SERVER_URL}/uploads/${campaign.image}`
+                  : `${serverUrl}/uploads/${campaign.image}`
               }
               alt={campaign.title}
               className="w-full h-96 object-cover rounded-lg mb-4"
@@ -128,12 +127,14 @@ export default function CampaignDetail() {
             <div className="text-sm text-gray-600 mb-2">
               raised of ₹{goal.toLocaleString()} goal
             </div>
-
-            <div className="w-full h-3 bg-gray-200 rounded-full overflow-hidden mb-4">
+            <div className="w-full h-3 bg-gray-200 rounded-full overflow-hidden mb-2">
               <div
                 className="h-3 bg-teal-600 transition-all duration-500"
                 style={{ width: `${progress}%` }}
               ></div>
+            </div>
+            <div className="text-right text-xs text-gray-500 mb-4">
+              {progress}% funded
             </div>
 
             {/* Offer */}
@@ -170,8 +171,10 @@ export default function CampaignDetail() {
         {/* Donate Modal */}
         {donateModalOpen && (
           <DonateModal
-            campaign={campaign}
-            closeModal={() => setDonateModalOpen(false)}
+            campaignId={campaign._id}
+            campaignTitle={campaign.title}
+            onClose={() => setDonateModalOpen(false)}
+            onDonationSuccess={fetchCampaign} // Refresh data on success
           />
         )}
       </div>
