@@ -4,6 +4,9 @@ import axios from "axios";
 import DonateModal from "./DonateModal";
 import Footer from "./Footer";
 
+const serverUrl = import.meta.env.VITE_SERVER_URL;
+
+
 export default function CampaignDetail() {
   const { id } = useParams();
   const [campaign, setCampaign] = useState(null);
@@ -14,7 +17,7 @@ export default function CampaignDetail() {
   useEffect(() => {
     const fetchCampaign = async () => {
       try {
-        const res = await axios.get(`${import.meta.env.VITE_SERVER_URL}/campaigns/${id}`);
+        const res = await axios.get(`${serverUrl}/api/campaigns/${id}`);
         setCampaign(res.data);
       } catch (err) {
         setError("Failed to fetch campaign.");
