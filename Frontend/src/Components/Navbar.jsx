@@ -120,7 +120,16 @@ export default function Navbar() {
             <button onClick={handleStartFundraiser} className="btn btn-outline-primary w-100">Start a Fundraiser</button>
 
             {!isLoggedIn ? (
-              <button onClick={() => navigate("/login")} className="btn btn-primary w-100">Sign In</button>
+              <button
+                  onClick={() => {
+                    setIsMobileMenuOpen(false); // ✅ Close mobile menu
+                    navigate("/login");
+                }}
+                className="btn btn-primary w-100"
+              >
+              Sign In
+            </button>
+
             ) : (
               <>
                 <button onClick={() => { navigate("/userprofile"); setIsMobileMenuOpen(false); }} className="btn btn-link text-start">Profile</button>
