@@ -11,10 +11,12 @@ const DonateModal = ({ campaignId, campaignTitle, onClose, onDonationSuccess }) 
   const [loading, setLoading] = useState(false);
   const [totalRaised, setTotalRaised] = useState(0);
 
+  const SERVER_URL = import.meta.env.VITE_SERVER_URL;
+
   useEffect(() => {
     const fetchTotalRaised = async () => {
       try {
-        const res = await fetch(`/api/donations/total/${campaignId}`);
+        const res = await fetch(`${SERVER_URL}/api/donations/total/${campaignId}`);
         const data = await res.json();
         setTotalRaised(data.total || 0);
       } catch (error) {
@@ -23,7 +25,7 @@ const DonateModal = ({ campaignId, campaignTitle, onClose, onDonationSuccess }) 
     };
 
     fetchTotalRaised();
-  }, [campaignId]);
+  }, [campaignId, SERVER_URL]);
 
   const handleDonate = async () => {
     if (!name.trim() || !phone.trim() || !amount || isNaN(amount) || Number(amount) <= 0) {
@@ -31,8 +33,8 @@ const DonateModal = ({ campaignId, campaignTitle, onClose, onDonationSuccess }) 
       return;
     }
 
-    const res = await loadRazorpay();
-    if (!res) {
+    const sdkLoaded = await loadRazorpay();
+    if (!sdkLoaded) {
       alert("Razorpay SDK failed to load.");
       return;
     }
@@ -40,7 +42,7 @@ const DonateModal = ({ campaignId, campaignTitle, onClose, onDonationSuccess }) 
     setLoading(true);
 
     try {
-      const orderRes = await fetch("/api/payment/create-order", {
+      const orderRes = await fetch(`${SERVER_URL}/api/payment/create-order`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ amount: Number(amount) }),
@@ -54,7 +56,7 @@ const DonateModal = ({ campaignId, campaignTitle, onClose, onDonationSuccess }) 
       const { order } = await orderRes.json();
 
       const options = {
-        key: "rzp_test_tgAbLTfLMKWcwU", // Replace with your Razorpay Key ID
+        key: import.meta.env.VITE_RAZORPAY_KEY_ID || "rzp_test_tgAbLTfLMKWcwU", // fallback
         amount: order.amount,
         currency: order.currency,
         name: "Seva Fundraiser",
@@ -62,7 +64,7 @@ const DonateModal = ({ campaignId, campaignTitle, onClose, onDonationSuccess }) 
         order_id: order.id,
         handler: async function (response) {
           try {
-            const donationRes = await fetch("/api/donations/donate", {
+            const donationRes = await fetch(`${SERVER_URL}/api/donations/donate`, {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({
@@ -81,8 +83,6 @@ const DonateModal = ({ campaignId, campaignTitle, onClose, onDonationSuccess }) 
             }
 
             alert("Thank you for your donation!");
-
-            // 🔁 Trigger refresh on parent
             if (typeof onDonationSuccess === "function") {
               await onDonationSuccess();
             }
@@ -94,11 +94,7 @@ const DonateModal = ({ campaignId, campaignTitle, onClose, onDonationSuccess }) 
             alert("Payment succeeded but failed to record donation. Please contact support.");
           }
         },
-        prefill: {
-          name,
-          email,
-          contact: phone,
-        },
+        prefill: { name, email, contact: phone },
         theme: { color: "#4CAF50" },
       };
 
@@ -116,9 +112,7 @@ const DonateModal = ({ campaignId, campaignTitle, onClose, onDonationSuccess }) 
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-60 z-50">
       <div className="bg-white p-6 rounded-2xl shadow-xl w-full max-w-md">
         <h2 className="text-xl font-bold mb-2">Donate to {campaignTitle}</h2>
-        <p className="text-sm text-gray-600 mb-4">
-          ₹{totalRaised} raised so far
-        </p>
+        <p className="text-sm text-gray-600 mb-4">₹{totalRaised} raised so far</p>
 
         <input
           type="text"

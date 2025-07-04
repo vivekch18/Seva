@@ -5,23 +5,25 @@ import CampaignCard from "./CampaignCard";
 const MyCampaigns = () => {
   const [campaigns, setCampaigns] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null); // Optional error handling
+  const [error, setError] = useState(null);
 
   const fetchMyCampaigns = async () => {
     try {
       const token = localStorage.getItem("token");
-      const res = await axios.get("/api/campaigns/my-campaigns", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const res = await axios.get(
+        `${import.meta.env.VITE_SERVER_URL}/api/campaigns/my-campaigns`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
-      // ✅ Check if data is array before setting
       if (Array.isArray(res.data)) {
         setCampaigns(res.data);
       } else {
         console.error("Unexpected response:", res.data);
-        setCampaigns([]); // fallback to empty
+        setCampaigns([]);
         setError("Unexpected data format from server.");
       }
     } catch (err) {
@@ -37,7 +39,6 @@ const MyCampaigns = () => {
   }, []);
 
   if (loading) return <div className="text-center mt-10">Loading...</div>;
-
   if (error) return <div className="text-center mt-10 text-red-600">{error}</div>;
 
   return (

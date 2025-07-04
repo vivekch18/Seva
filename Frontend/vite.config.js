@@ -6,7 +6,7 @@ export default defineConfig({
   plugins: [react(), tailwindcss()],
   server: {
     proxy: {
-      '/api': 'http://localhost:5000', // 👈 Replace 5000 with your actual backend port if different
+      '/api': `${import.meta.env.VITE_SERVER_URL}`, // 👈 Replace 5000 with your actual backend port if different
     },
   },
 });

@@ -59,13 +59,13 @@ export default function CampaignList() {
   };
 
   return (
-    <main className="pt-24 bg-gray-50 min-h-screen">
+    <main className="pt-24 bg-gray-50 min-h-screen px-4 sm:px-6 lg:px-8">
       {/* Banner */}
       <div className="w-full">
-        <div className="bg-gradient-to-r from-cyan-700 to-blue-500 p-10 text-white flex flex-col lg:flex-row items-center justify-between gap-6">
+        <div className="bg-gradient-to-r from-cyan-700 to-blue-500 p-6 sm:p-10 text-white flex flex-col lg:flex-row items-center justify-between gap-6">
           <div className="max-w-xl">
-            <h1 className="text-4xl font-bold mb-4">Save A Child Every Month</h1>
-            <p className="mb-6 text-lg">
+            <h1 className="text-3xl sm:text-4xl font-bold mb-4">Save A Child Every Month</h1>
+            <p className="mb-6 text-base sm:text-lg">
               Join <span className="font-semibold">421,908</span> monthly contributors with Social Impact Plan & start saving needy children every month
             </p>
             <button className="bg-white text-cyan-700 px-6 py-3 rounded-full font-semibold hover:bg-gray-100">
@@ -75,13 +75,13 @@ export default function CampaignList() {
           <img
             src="https://images.pexels.com/photos/3933022/pexels-photo-3933022.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=300"
             alt="Child"
-            className="rounded-xl shadow-lg h-[120px] lg:h-[300px] object-cover"
+            className="rounded-xl shadow-lg w-full max-w-xs lg:max-w-md object-cover"
           />
         </div>
       </div>
 
       {/* Campaign Cards */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-16">
+      <div className="max-w-7xl mx-auto pt-12 pb-16">
         {loading ? (
           <div className="flex justify-center items-center h-48 text-indigo-600">
             Loading campaigns...
@@ -93,7 +93,7 @@ export default function CampaignList() {
         ) : Array.isArray(campaigns) && campaigns.length === 0 ? (
           <p className="text-gray-500 text-center">No campaigns found.</p>
         ) : (
-          <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-8 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3">
             {Array.isArray(campaigns) &&
               campaigns.map((campaign) => {
                 const imageUrl =
