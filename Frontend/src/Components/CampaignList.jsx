@@ -16,7 +16,14 @@ export default function CampaignList() {
     const fetchCampaigns = async () => {
       try {
         const res = await axios.get(`${import.meta.env.VITE_SERVER_URL}/api/campaigns`);
-        setCampaigns(res.data);
+        const data = res.data;
+
+        if (Array.isArray(data)) {
+          setCampaigns(data);
+        } else {
+          console.warn("API did not return an array:", data);
+          setCampaigns([]);
+        }
       } catch (err) {
         console.error("Error fetching campaigns:", err);
         setError("Failed to load campaigns.");
@@ -76,96 +83,102 @@ export default function CampaignList() {
       {/* Campaign Cards */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-16">
         {loading ? (
-          <div className="flex justify-center items-center h-48 text-indigo-600">Loading campaigns...</div>
+          <div className="flex justify-center items-center h-48 text-indigo-600">
+            Loading campaigns...
+          </div>
         ) : error ? (
-          <div className="flex justify-center items-center h-48 text-red-600">{error}</div>
-        ) : campaigns.length === 0 ? (
+          <div className="flex justify-center items-center h-48 text-red-600">
+            {error}
+          </div>
+        ) : Array.isArray(campaigns) && campaigns.length === 0 ? (
           <p className="text-gray-500 text-center">No campaigns found.</p>
         ) : (
           <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-            {campaigns.map((campaign) => {
-              const imageUrl =
-                campaign.image?.startsWith("http") || campaign.image?.includes("base64")
-                  ? campaign.image
-                  : `${import.meta.env.VITE_SERVER_URL}/uploads/${campaign.image}`;
-              const goal = Number(campaign.goal) || 0;
-              const raised = Number(campaign.totalAmount) || 0;
-              const progress = goal > 0 ? Math.min((raised / goal) * 100, 100) : 0;
-              const deadline = campaign.deadline
-                ? Math.ceil((new Date(campaign.deadline) - new Date()) / (1000 * 60 * 60 * 24))
-                : null;
+            {Array.isArray(campaigns) &&
+              campaigns.map((campaign) => {
+                const imageUrl =
+                  campaign.image?.startsWith("http") || campaign.image?.includes("base64")
+                    ? campaign.image
+                    : `${import.meta.env.VITE_SERVER_URL}/uploads/${campaign.image}`;
 
-              return (
-                <div
-                  key={campaign._id}
-                  className="bg-white rounded-2xl shadow-md hover:shadow-lg transition-all overflow-hidden flex flex-col min-h-[420px]"
-                >
-                  <Link to={`/campaign/${campaign._id}`}>
-                    <img
-                      src={imageUrl}
-                      alt={campaign.title}
-                      className="w-full h-36 object-cover"
-                      onError={(e) => {
-                        e.target.onerror = null;
-                        e.target.src = "https://via.placeholder.com/400x200?text=No+Image";
-                      }}
-                    />
-                  </Link>
+                const goal = Number(campaign.goal) || 0;
+                const raised = Number(campaign.totalAmount) || 0;
+                const progress = goal > 0 ? Math.min((raised / goal) * 100, 100) : 0;
+                const deadline = campaign.deadline
+                  ? Math.ceil((new Date(campaign.deadline) - new Date()) / (1000 * 60 * 60 * 24))
+                  : null;
 
-                  <div className="flex flex-col justify-between flex-grow p-4 space-y-2">
-                    <div>
-                      <h2 className="text-md font-semibold text-gray-800 leading-tight mb-1 line-clamp-2">
-                        {campaign.title}
-                      </h2>
-                      <p className="text-sm text-gray-500 mb-2 line-clamp-1">
-                        {campaign.medicalCondition}
-                      </p>
+                return (
+                  <div
+                    key={campaign._id}
+                    className="bg-white rounded-2xl shadow-md hover:shadow-lg transition-all overflow-hidden flex flex-col min-h-[420px]"
+                  >
+                    <Link to={`/campaign/${campaign._id}`}>
+                      <img
+                        src={imageUrl}
+                        alt={campaign.title}
+                        className="w-full h-36 object-cover"
+                        onError={(e) => {
+                          e.target.onerror = null;
+                          e.target.src = "https://via.placeholder.com/400x200?text=No+Image";
+                        }}
+                      />
+                    </Link>
 
-                      <div className="flex justify-between text-sm text-gray-700 mb-2">
-                        <div>
-                          <p className="text-gray-500">Raised</p>
-                          <p className="font-semibold text-green-600">₹{raised.toLocaleString()}</p>
-                        </div>
-                        <div>
-                          <p className="text-gray-500">Goal</p>
-                          <p className="font-semibold">₹{goal.toLocaleString()}</p>
-                        </div>
-                        {deadline !== null && (
+                    <div className="flex flex-col justify-between flex-grow p-4 space-y-2">
+                      <div>
+                        <h2 className="text-md font-semibold text-gray-800 leading-tight mb-1 line-clamp-2">
+                          {campaign.title}
+                        </h2>
+                        <p className="text-sm text-gray-500 mb-2 line-clamp-1">
+                          {campaign.medicalCondition}
+                        </p>
+
+                        <div className="flex justify-between text-sm text-gray-700 mb-2">
                           <div>
-                            <p className="text-gray-500">Ends In</p>
-                            <p className="text-red-500 font-semibold">{deadline} Days</p>
+                            <p className="text-gray-500">Raised</p>
+                            <p className="font-semibold text-green-600">₹{raised.toLocaleString()}</p>
                           </div>
-                        )}
+                          <div>
+                            <p className="text-gray-500">Goal</p>
+                            <p className="font-semibold">₹{goal.toLocaleString()}</p>
+                          </div>
+                          {deadline !== null && (
+                            <div>
+                              <p className="text-gray-500">Ends In</p>
+                              <p className="text-red-500 font-semibold">{deadline} Days</p>
+                            </div>
+                          )}
+                        </div>
+
+                        <div className="w-full bg-gray-200 rounded-full h-2">
+                          <div
+                            className="bg-indigo-600 h-full rounded-full"
+                            style={{ width: `${progress}%` }}
+                          />
+                        </div>
                       </div>
 
-                      <div className="w-full bg-gray-200 rounded-full h-2">
-                        <div
-                          className="bg-indigo-600 h-full rounded-full"
-                          style={{ width: `${progress}%` }}
-                        />
+                      {/* Buttons */}
+                      <div className="flex gap-2 pt-2">
+                        <button
+                          onClick={() => handleShareClick(campaign)}
+                          className="flex items-center justify-center gap-1 px-3 py-2 text-sm font-medium text-indigo-600 border border-indigo-600 rounded bg-white hover:text-sky-700 w-1/2"
+                        >
+                          <FaShareAlt />
+                          Share
+                        </button>
+                        <button
+                          onClick={() => handleDonateClick(campaign)}
+                          className="px-3 py-2 text-sm font-medium text-white bg-sky-500 rounded hover:bg-sky-600 w-1/2"
+                        >
+                          Contribute
+                        </button>
                       </div>
-                    </div>
-
-                    {/* Buttons */}
-                    <div className="flex gap-2 pt-2">
-                      <button
-                        onClick={() => handleShareClick(campaign)}
-                        className="flex items-center justify-center gap-1 px-3 py-2 text-sm font-medium text-indigo-600 border border-indigo-600 rounded bg-white hover:text-sky-700 w-1/2"
-                      >
-                        <FaShareAlt />
-                        Share
-                      </button>
-                      <button
-                        onClick={() => handleDonateClick(campaign)}
-                        className="px-3 py-2 text-sm font-medium text-white bg-sky-500 rounded hover:bg-sky-600 w-1/2"
-                      >
-                        Contribute
-                      </button>
                     </div>
                   </div>
-                </div>
-              );
-            })}
+                );
+              })}
           </div>
         )}
       </div>

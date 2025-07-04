@@ -6,24 +6,31 @@ import FundraiserSteps from "../Components/FundraiserSteps";
 import WhySeva from "./Whyseva";
 import { useNavigate, Link } from "react-router-dom";
 
-const heroImage = "/Cancer-patient.jpg"; // ✅ Make sure it's NOT duplicated
+const heroImage = "/Cancer-patient.jpg"; // ✅ Make sure this exists in /public
 
 export default function Home() {
   const [campaigns, setCampaigns] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchCampaigns = async () => {
       try {
-        const res = await axios.get("/api/campaigns"); // ✅ Use relative URL in production
-        setCampaigns(res.data);
+        const res = await axios.get(`${import.meta.env.VITE_SERVER_URL}/api/campaigns`);
+        if (Array.isArray(res.data)) {
+          setCampaigns(res.data);
+        } else {
+          setError("Unexpected response format.");
+        }
       } catch (err) {
         console.error("Failed to fetch campaigns:", err);
+        setError("Unable to load campaigns. Please try again later.");
       } finally {
         setLoading(false);
       }
     };
+
     fetchCampaigns();
   }, []);
 
@@ -54,8 +61,7 @@ export default function Home() {
         <div className="position-relative text-center px-4">
           <h1 className="display-4 fw-bold mb-3">Support a Life, Fund a Cause</h1>
           <p className="lead mb-4">
-            Seva is a medical crowdfunding platform helping real people in
-            critical need.
+            Seva is a medical crowdfunding platform helping real people in critical need.
           </p>
           <div className="text-center mt-5" data-aos="fade-up">
             <button
@@ -74,16 +80,20 @@ export default function Home() {
         <h2 className="text-center fw-bold mb-4 text-primary">Active Campaigns</h2>
         {loading ? (
           <p className="text-center text-muted">Loading campaigns...</p>
+        ) : error ? (
+          <p className="text-center text-danger">{error}</p>
         ) : campaigns.length === 0 ? (
           <p className="text-center text-muted">No campaigns available right now.</p>
         ) : (
           <>
             <div className="row g-4">
-              {limitedCampaigns.map((c) => (
-                <div className="col-md-6 col-lg-4" key={c._id}>
-                  <CampaignCard campaign={c} />
-                </div>
-              ))}
+              {limitedCampaigns.map((campaign) =>
+                campaign && campaign._id ? (
+                  <div className="col-md-6 col-lg-4" key={campaign._id}>
+                    <CampaignCard campaign={campaign} />
+                  </div>
+                ) : null
+              )}
             </div>
             {showSeeAll && (
               <div className="d-flex justify-content-end mt-4">
@@ -106,7 +116,7 @@ export default function Home() {
       {/* Why Seva Section */}
       <WhySeva />
 
-      {/* Footer Section */}
+      {/* Footer */}
       <Footer />
     </main>
   );
