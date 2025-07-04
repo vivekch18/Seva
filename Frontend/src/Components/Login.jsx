@@ -3,16 +3,16 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
 export default function Login() {
-  const [input, setInput] = useState(""); // mobile number only
+  const [input, setInput] = useState("");
   const [otpSent, setOtpSent] = useState(false);
   const [otp, setOtp] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
-  const [isPasswordLogin, setIsPasswordLogin] = useState(false);
+  const [info, setInfo] = useState(null); // ✅ For OTP info message
+  const [isPasswordLogin, setIsPasswordLogin] = useState(true);
   const [timer, setTimer] = useState(0);
   const navigate = useNavigate();
 
-  // Countdown logic
   useEffect(() => {
     let interval;
     if (timer > 0) {
@@ -33,10 +33,10 @@ export default function Login() {
         contact: input.trim(),
       });
       setOtpSent(true);
-      setTimer(30); // Start 30 seconds delay
+      setTimer(30);
       setError(null);
     } catch (err) {
-      setError(err.response?.data?.error || "Failed to send OTP");
+      setError("This app is using a free version of message integration, so it cannot send OTP to your phone.");
     }
   };
 
@@ -91,31 +91,29 @@ export default function Login() {
     setOtpSent(false);
     setOtp("");
     setPassword("");
+    setInfo(
+      !isPasswordLogin
+        ? null
+        : "This app is using a free version of message integration, so it cannot able send OTP to your phone."
+    );
   };
 
   return (
     <div className="container d-flex justify-content-center align-items-center py-5 mt-5">
       <div className="w-100" style={{ maxWidth: "420px" }}>
-        {/* Promo Banner */}
-        <div
-          className="alert alert-success text-center small rounded-pill py-2 mb-4"
-          role="alert"
-        >
+        <div className="alert alert-success text-center small rounded-pill py-2 mb-4">
           🎁 Save a life with just ₹10 on the Seva App.{" "}
           <strong>
-            <a href="#" className="text-decoration-underline">
-              Download Now
-            </a>
+            <a href="#" className="text-decoration-underline">Download Now</a>
           </strong>
         </div>
 
-        {/* Login Box */}
         <div className="border rounded shadow-sm p-4 bg-white">
           <h3 className="text-center fw-bold mb-4">Login</h3>
 
           {error && <div className="alert alert-danger">{error}</div>}
+          {info && <div className="alert alert-warning">{info}</div>}
 
-          {/* Mobile Number Field */}
           <input
             type="text"
             placeholder="Mobile Number *"
@@ -127,7 +125,6 @@ export default function Login() {
             }}
           />
 
-          {/* Conditional Form Fields */}
           {isPasswordLogin ? (
             <>
               <input
@@ -183,7 +180,6 @@ export default function Login() {
             </>
           )}
 
-          {/* Toggle Login Mode */}
           <div className="text-center my-2">
             <button
               className="btn btn-link text-info text-decoration-none fw-medium p-0"
@@ -193,14 +189,12 @@ export default function Login() {
             </button>
           </div>
 
-          {/* Divider */}
           <div className="d-flex align-items-center my-3">
             <div className="flex-grow-1 border-top"></div>
             <span className="mx-2 text-muted">OR</span>
             <div className="flex-grow-1 border-top"></div>
           </div>
 
-          {/* Google Sign In */}
           <button
             className="text-dark btn btn-outline-light border w-100 d-flex align-items-center justify-content-center shadow-sm"
             onClick={handleGoogleLogin}
@@ -218,16 +212,10 @@ export default function Login() {
             Sign in
           </button>
 
-          {/* Terms + CTA */}
           <div className="text-center small text-muted mt-4">
             By continuing you agree to our{" "}
-            <a href="#" className="text-info">
-              Terms of Service
-            </a>{" "}
-            and{" "}
-            <a href="#" className="text-info">
-              Privacy Policy
-            </a>
+            <a href="#" className="text-info">Terms of Service</a> and{" "}
+            <a href="#" className="text-info">Privacy Policy</a>
           </div>
 
           <div className="text-center mt-3 fw-medium">

@@ -60,7 +60,7 @@ const connectToMongoDB = async () => {
   try {
     await mongoose.connect(process.env.MONGO_URI, {
       useNewUrlParser: true,
-      useUnifiedTopology: true, // ✅ Important for production
+      // useUnifiedTopology: true, // ✅ Important for production
     });
 
     isConnected = true;
