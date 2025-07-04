@@ -1,6 +1,9 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom"; // ✅ Import navigate
 
 const Register = () => {
+  const navigate = useNavigate(); // ✅ Initialize navigate
+
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -71,7 +74,7 @@ const Register = () => {
           setErrors({ general: data.error || "Registration failed" });
         } else {
           alert("Registration successful. Please login.");
-          // Redirect to login if needed
+          navigate("/login"); // ✅ Navigate to login page
         }
       } catch (error) {
         setErrors({ general: "Server error. Please try again later." });
@@ -85,6 +88,7 @@ const Register = () => {
         <h2 className="text-xl font-semibold mb-4 text-center">Register for Seva</h2>
 
         <form onSubmit={handleSubmit} className="space-y-4" noValidate>
+          {/* Name */}
           <div>
             <label className="block mb-1" htmlFor="name">Full Name</label>
             <input
@@ -102,6 +106,7 @@ const Register = () => {
             {errors.name && <p className="text-red-600 text-sm mt-1">{errors.name}</p>}
           </div>
 
+          {/* Email */}
           <div>
             <label className="block mb-1" htmlFor="email">Email</label>
             <input
@@ -119,6 +124,7 @@ const Register = () => {
             {errors.email && <p className="text-red-600 text-sm mt-1">{errors.email}</p>}
           </div>
 
+          {/* Phone */}
           <div>
             <label className="block mb-1" htmlFor="phone">Phone Number</label>
             <input
@@ -136,6 +142,7 @@ const Register = () => {
             {errors.phone && <p className="text-red-600 text-sm mt-1">{errors.phone}</p>}
           </div>
 
+          {/* Password */}
           <div>
             <label className="block mb-1" htmlFor="password">Password</label>
             <input
@@ -154,6 +161,7 @@ const Register = () => {
             {errors.password && <p className="text-red-600 text-sm mt-1">{errors.password}</p>}
           </div>
 
+          {/* Confirm Password */}
           <div>
             <label className="block mb-1" htmlFor="confirmPassword">Confirm Password</label>
             <input
