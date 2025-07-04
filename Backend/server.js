@@ -51,19 +51,27 @@ app.use(passport.session());
 // Serve static files (uploads)
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
-// Connect to MongoDB
-mongoose
-  .connect(process.env.MONGO_URI, {
-    useNewUrlParser: true,
-    // useUnifiedTopology: true,
-  })
-  .then(() => console.log("✅ MongoDB connected"))
-  .catch((err) => console.error("❌ MongoDB connection error:", err));
+// MongoDB connection
+let isConnected = false;
 
-// Health check route
-app.get("/", (req, res) => {
-  res.send("Seva backend is running!");
-});
+const connectToMongoDB = async () => {
+  if (isConnected) return;
+
+  try {
+    await mongoose.connect(process.env.MONGO_URI, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true, // ✅ Important for production
+    });
+
+    isConnected = true;
+    console.log("✅ MongoDB connected");
+  } catch (err) {
+    console.error("❌ MongoDB connection error:", err.message);
+  }
+};
+
+// Call connection before server starts
+connectToMongoDB();
 
 // Optional: prevent favicon 404 spam
 app.get("/favicon.ico", (req, res) => res.status(204).end());
